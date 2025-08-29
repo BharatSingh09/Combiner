@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOC-TP File Processor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* keep your gradients, cards, etc. */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+        .upload-zone:hover {
+            border-color: #38ef7d;
+            background: rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-4 fw-bold text-white mb-3">
+                        <i class="fas fa-file-csv me-3"></i>TOC-TP File Processor
+                    </h1>
+                    <p class="lead text-white-50">
+                        Combine and process your TOC and TP files with advanced signal matching
+                    </p>
+                </div>
+
+                <!-- Upload Form -->
+                <div class="glass-card">
+                    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                        <div class="row g-4">
+
+                            <!-- TOC File -->
+                            <div class="col-md-6">
+                                <label class="form-label text-white fw-semibold">
+                                    <i class="fas fa-file-upload me-2"></i>TOC File
+                                </label>
+                                <div class="upload-zone" onclick="document.getElementById('toc_file').click()">
+                                    <div class="file-icon">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-white-50"></i>
+                                    </div>
+                                    <p class="text-white mb-2">Click to upload TOC file</p>
+                                    <small class="text-white-50">CSV, XLS, XLSX supported</small>
+                                    <input type="file" id="toc_file" name="toc_file" class="d-none" accept=".csv,.xlsx,.xls" required>
+                                </div>
+                                <div id="toc_file_name" class="mt-2 text-white-50 small"></div>
+                            </div>
+
+                            <!-- TP File -->
+                            <div class="col-md-6">
+                                <label class="form-label text-white fw-semibold">
+                                    <i class="fas fa-file-upload me-2"></i>TP File
+                                </label>
+                                <div class="upload-zone" onclick="document.getElementById('tp_file').click()">
+                                    <div class="file-icon">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-white-50"></i>
+                                    </div>
+                                    <p class="text-white mb-2">Click to upload TP file</p>
+                                    <small class="text-white-50">CSV, XLS, XLSX supported</small>
+                                    <input type="file" id="tp_file" name="tp_file" class="d-none" accept=".csv,.xlsx,.xls" required>
+                                </div>
+                                <div id="tp_file_name" class="mt-2 text-white-50 small"></div>
+                            </div>
+
+                            <!-- Output Filename -->
+                            <div class="col-12">
+                                <label for="output_filename" class="form-label text-white fw-semibold">
+                                    <i class="fas fa-file-signature me-2"></i>Output Filename
+                                </label>
+                                <input type="text" class="form-control" id="output_filename" 
+                                       name="output_filename" value="final_combined.csv" 
+                                       placeholder="Enter output filename">
+                                <small class="text-white-50">File will be saved with .csv extension</small>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-success btn-lg px-5">
+                                    <i class="fas fa-cogs me-2"></i>Process Files
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // show selected filenames
+        document.getElementById('toc_file').addEventListener('change', function(e) {
+            document.getElementById('toc_file_name').textContent =
+                e.target.files[0] ? `Selected: ${e.target.files[0].name}` : '';
+        });
+        document.getElementById('tp_file').addEventListener('change', function(e) {
+            document.getElementById('tp_file_name').textContent =
+                e.target.files[0] ? `Selected: ${e.target.files[0].name}` : '';
+        });
+    </script>
+</body>
+</html>

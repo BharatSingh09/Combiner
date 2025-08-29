@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Complete - TOC-TP File Processor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-success-glass {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+        }
+        
+        .btn-success-glass:hover {
+            background: var(--success-gradient);
+            filter: brightness(1.1);
+            color: white;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #38ef7d;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            80% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .stats-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatShapes 15s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            width: 20px;
+            height: 20px;
+            left: 10%;
+            animation-delay: -2s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 30px;
+            height: 30px;
+            left: 20%;
+            animation-delay: -4s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 15px;
+            height: 15px;
+            left: 70%;
+            animation-delay: -6s;
+        }
+        
+        @keyframes floatShapes {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .combo-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .combo-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .combo-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .combo-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .combo-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .matched .section-icon {
+            color: #38ef7d;
+        }
+
+        .unmatched .section-icon {
+            color: #ff6b6b;
+        }
+
+        .unused .section-icon {
+            color: #ffa726;
+        }
+
+        .accordion-button {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: white !important;
+            border-radius: 15px !important;
+            margin-bottom: 10px;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: none !important;
+        }
+
+        .accordion-button::after {
+            filter: invert(1);
+        }
+
+        .accordion-body {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+        }
+
+        .accordion-item {
+            background: transparent !important;
+            border: none !important;
+        }
+
+        .no-combos {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .badge-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Success Header -->
+                <div class="text-center mb-5">
+                    <div class="success-icon mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h1 class="display-4 fw-bold text-white mb-3">
+                        Processing Complete!
+                    </h1>
+                    <p class="lead text-white-50">
+                        Your TOC and TP files have been successfully combined and processed
+                    </p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ matches_found }}</div>
+                            <h5 class="text-white mb-2">Rows Matched</h5>
+                            <p class="text-white-50 small mb-0">Successfully matched TOC-TP signal pairs</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ total_toc_rows }}</div>
+                            <h5 class="text-white mb-2">Total TOC Rows</h5>
+                            <p class="text-white-50 small mb-0">Total rows processed from TOC file</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ "%.1f"|format((matches_found / total_toc_rows * 100) if total_toc_rows > 0 else 0) }}%</div>
+                            <h5 class="text-white mb-2">Match Rate</h5>
+                            <p class="text-white-50 small mb-0">Percentage of successful matches</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <div class="stats-number">{{ (unmatched_combos|length) + (unused_tp_combos|length) }}</div>
+                            <h5 class="text-white mb-2">Unmatched</h5>
+                            <p class="text-white-50 small mb-0">Combos that couldn't be matched</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Section -->
+                <div class="glass-card p-5 text-center mb-5">
+                    <div class="mb-4">
+                        <i class="fas fa-file-csv" style="font-size: 4rem; color: #38ef7d;"></i>
+                    </div>
+                    <h3 class="text-white mb-3">Your File is Ready!</h3>
+                    <p class="text-white-50 mb-4">
+                        <strong>{{ filename }}</strong> has been processed with the following features:
+                    </p>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="glass-card p-3">
+                                <i class="fas fa-check text-success mb-2"></i>
+                                <small class="text-white-50 d-block">Signal Matching</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="glass-card p-3">
+                                <i class="fas fa-check text-success mb-2"></i>
+                                <small class="text-white-50 d-block">Column Trimming</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="glass-card p-3">
+                                <i class="fas fa-check text-success mb-2"></i>
+                                <small class="text-white-50 d-block">Header Formatting</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="glass-card p-3">
+                                <i class="fas fa-check text-success mb-2"></i>
+                                <small class="text-white-50 d-block">Data Cleaning</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="/download/{{ filename }}" class="btn btn-success-glass btn-lg pulse">
+                            <i class="fas fa-download me-2"></i>Download File
+                        </a>
+                        <a href="/" class="btn btn-glass btn-lg">
+                            <i class="fas fa-plus me-2"></i>Process Another File
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Signal Combinations Analysis -->
+                <div class="glass-card p-4 mb-5">
+                    <h4 class="text-white mb-4">
+                        <i class="fas fa-chart-bar me-2"></i>Signal Combinations Analysis
+                    </h4>
+                    
+                    <div class="accordion" id="combosAccordion">
+                        <!-- Matched Combos -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="matchedHeader">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchedCombos" aria-expanded="true" aria-controls="matchedCombos">
+                                    <i class="fas fa-check-circle text-success me-3" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Successfully Matched Combinations</span>
+                                    <span class="badge-count">{{ matched_combos|length }}</span>
+                                </button>
+                            </h2>
+                            <div id="matchedCombos" class="accordion-collapse collapse show" aria-labelledby="matchedHeader" data-bs-parent="#combosAccordion">
+                                <div class="accordion-body">
+                                    <div class="combo-list">
+                                        {% if matched_combos %}
+                                            {% for combo in matched_combos %}
+                                                <div class="combo-item">
+                                                    <i class="fas fa-arrow-right text-success me-2"></i>
+                                                    {{ combo }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="no-combos">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                No matched combinations found
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unmatched TOC Combos -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="unmatchedHeader">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#unmatchedCombos" aria-expanded="false" aria-controls="unmatchedCombos">
+                                    <i class="fas fa-times-circle text-danger me-3" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Unmatched TOC Combinations</span>
+                                    <span class="badge-count">{{ unmatched_combos|length }}</span>
+                                </button>
+                            </h2>
+                            <div id="unmatchedCombos" class="accordion-collapse collapse" aria-labelledby="unmatchedHeader" data-bs-parent="#combosAccordion">
+                                <div class="accordion-body">
+                                    <div class="alert alert-warning" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); color: #ffc107;">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        These signal combinations exist in your TOC file but couldn't find matching entries in the TP file
+                                    </div>
+                                    <div class="combo-list">
+                                        {% if unmatched_combos %}
+                                            {% for combo in unmatched_combos %}
+                                                <div class="combo-item">
+                                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                    {{ combo }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="no-combos">
+                                                <i class="fas fa-check-circle me-2"></i>
+                                                All TOC combinations were successfully matched!
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unused TP Combos -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="unusedHeader">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#unusedCombos" aria-expanded="false" aria-controls="unusedCombos">
+                                    <i class="fas fa-clock text-info me-3" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Unused TP Combinations</span>
+                                    <span class="badge-count">{{ unused_tp_combos|length }}</span>
+                                </button>
+                            </h2>
+                            <div id="unusedCombos" class="accordion-collapse collapse" aria-labelledby="unusedHeader" data-bs-parent="#combosAccordion">
+                                <div class="accordion-body">
+                                    <div class="alert alert-info" style="background: rgba(13, 202, 240, 0.1); border: 1px solid rgba(13, 202, 240, 0.3); color: #0dcaf0;">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        These signal combinations exist in your TP file but weren't found in the TOC file
+                                    </div>
+                                    <div class="combo-list">
+                                        {% if unused_tp_combos %}
+                                            {% for combo in unused_tp_combos %}
+                                                <div class="combo-item">
+                                                    <i class="fas fa-clock text-info me-2"></i>
+                                                    {{ combo }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="no-combos">
+                                                <i class="fas fa-check-circle me-2"></i>
+                                                All TP combinations were used for matching!
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process Summary -->
+                <div class="glass-card p-4">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-info-circle me-2"></i>Processing Summary
+                    </h5>
+                    <div class="row g-3 text-white-50">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-caret-right text-success me-2"></i>Files successfully combined</li>
+                                <li><i class="fas fa-caret-right text-success me-2"></i>TOC columns trimmed after TLI Profile ID</li>
+                                <li><i class="fas fa-caret-right text-success me-2"></i>Standard headers applied</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-caret-right text-success me-2"></i>Trailing whitespace removed</li>
+                                <li><i class="fas fa-caret-right text-success me-2"></i>First column converted to float format</li>
+                                <li><i class="fas fa-caret-right text-success me-2"></i>Signal normalization applied</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stats cards on load
+            const statsCards = document.querySelectorAll('.stats-card');
+            statsCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 200);
+            });
+            
+            // Add click effect to download button
+            const downloadBtn = document.querySelector('.btn-success-glass');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function(e) {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Downloading...';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-check me-2"></i>Downloaded!';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-download me-2"></i>Download File';
+                        }, 2000);
+                    }, 1000);
+                });
+            }
+
+            // Add smooth scrolling to combo sections
+            const comboItems = document.querySelectorAll('.combo-item');
+            comboItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Auto-collapse accordion sections if they have no items
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+            accordionButtons.forEach(button => {
+                const targetId = button.getAttribute('aria-controls');
+                const targetElement = document.getElementById(targetId);
+                const comboList = targetElement.querySelector('.combo-list');
+                const noComboMessage = comboList.querySelector('.no-combos');
+                
+                if (noComboMessage && !button.classList.contains('collapsed')) {
+                    // If this section is empty and expanded, collapse it
+                    const nextButton = button.closest('.accordion-item').nextElementSibling?.querySelector('.accordion-button');
+                    if (nextButton && nextButton.classList.contains('collapsed')) {
+                        button.click(); // Collapse current
+                        nextButton.click(); // Expand next
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
